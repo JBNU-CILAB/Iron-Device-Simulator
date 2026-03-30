@@ -33,21 +33,41 @@ export default function TemperatureChart({ frames, currentTime, isActive }: Prop
       ? "#F59E0B"
       : "#0057B8";
 
-  // Sliding window: show last 10 seconds
+  // Sliding window: 10초 구간 (10ms × 1000 frames)
   const windowFrames = useMemo(() => {
-    if (!isActive || frameIdx < 0) return frames.slice(0, 100);
-    const start = Math.max(0, frameIdx - 99);
+    if (!isActive || frameIdx < 0) return frames.slice(0, 1000);
+    const start = Math.max(0, frameIdx - 999);
     return frames.slice(start, frameIdx + 1);
   }, [frames, frameIdx, isActive]);
 
   const option = useMemo(() => ({
     animation: false,
-    grid: { top: 8, right: 16, bottom: 32, left: 52 },
+    grid: { top: 8, right: 16, bottom: 52, left: 52 },
+    dataZoom: [
+      {
+        type: "inside",
+        xAxisIndex: 0,
+        filterMode: "filter",
+      },
+      {
+        type: "slider",
+        xAxisIndex: 0,
+        height: 16,
+        bottom: 4,
+        borderColor: "#E8EAF0",
+        backgroundColor: "#F5F6F8",
+        fillerColor: "rgba(0,87,184,0.12)",
+        handleStyle: { color: "#0057B8", borderColor: "#0057B8" },
+        moveHandleStyle: { color: "#0057B8" },
+        textStyle: { color: "#A4AABA", fontSize: 9 },
+        labelFormatter: (v: number) => `${(v as number).toFixed(2)}s`,
+      },
+    ],
     xAxis: {
       type: "value",
       min: windowFrames[0]?.time ?? 0,
       max: windowFrames[windowFrames.length - 1]?.time ?? 10,
-      axisLabel: { formatter: (v: number) => `${v.toFixed(1)}s`, color: "#A4AABA", fontSize: 10 },
+      axisLabel: { formatter: (v: number) => `${v.toFixed(2)}s`, color: "#A4AABA", fontSize: 10 },
       axisLine: { lineStyle: { color: "#E8EAF0" } },
       splitLine: { lineStyle: { color: "#F5F6F8" } },
     },
@@ -110,24 +130,24 @@ export default function TemperatureChart({ frames, currentTime, isActive }: Prop
   }), [windowFrames]);
 
   return (
-    <div className="card flex flex-col h-full">
+    <div id="temperature-chart" className="card flex flex-col h-full">
       <div className="card-header">
-        <div className="flex items-center gap-2">
+        <div className="chart-title-group flex items-center gap-2">
           <Thermometer size={14} className="text-iron-400" />
           <span className="card-title">Temperature</span>
         </div>
         {currentTemp !== null && (
-          <span className="font-mono text-lg font-semibold" style={{ color: tempColor }}>
+          <span id="current-temperature-value" className="font-mono text-lg font-semibold" style={{ color: tempColor }}>
             {currentTemp.toFixed(1)}<span className="text-xs ml-0.5 font-normal">°C</span>
           </span>
         )}
       </div>
 
-      <div className="flex-1 p-2 min-h-[180px]">
+      <div className="chart-body flex-1 p-2 min-h-[180px]">
         {frames.length > 0 ? (
           <ReactECharts option={option} style={{ height: "100%", width: "100%" }} notMerge />
         ) : (
-          <div className="h-full flex items-center justify-center text-xs text-iron-300">
+          <div className="chart-empty-state h-full flex items-center justify-center text-xs text-iron-300">
             분석 데이터 없음
           </div>
         )}

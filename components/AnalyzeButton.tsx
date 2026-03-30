@@ -16,6 +16,7 @@ export default function AnalyzeButton({ status, hasFile, onClick }: Props) {
 
   return (
     <button
+      id="analyze-btn"
       onClick={onClick}
       disabled={isDisabled}
       className={cn(
@@ -27,7 +28,7 @@ export default function AnalyzeButton({ status, hasFile, onClick }: Props) {
     >
       {isLoading ? (
         <>
-          <Loader2 size={15} className="animate-spin" />
+          <Loader2 size={15} className="btn-spinner animate-spin" />
           {status === "uploading" ? "업로드 중..." : "분석 중..."}
         </>
       ) : (

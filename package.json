@@ -17,7 +17,8 @@
     "wavesurfer.js": "^7.9.5",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.2.0",
-    "lucide-react": "^0.503.0"
+    "lucide-react": "^0.503.0",
+    "koffi": "^2.9.0"
   },
   "devDependencies": {
     "typescript": "^5",

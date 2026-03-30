@@ -101,19 +101,20 @@ export default function WaveformPlayer({
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="card">
+    <div id="waveform-player" className="card">
       <div className="card-header">
         <span className="card-title">Waveform</span>
         {isReady && (
-          <span className="font-mono text-xs text-iron-400">
+          <span id="waveform-time-display" className="font-mono text-xs text-iron-400">
             {formatTime(currentTime)} / {formatTime(duration)}
           </span>
         )}
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="waveform-body p-4 space-y-4">
         {/* WaveSurfer container */}
         <div
+          id="waveform-canvas"
           ref={containerRef}
           className={cn(
             "w-full rounded-lg bg-iron-50 overflow-hidden",
@@ -121,14 +122,15 @@ export default function WaveformPlayer({
           )}
         >
           {!audioFile && (
-            <p className="text-xs text-iron-400">파일을 업로드하면 파형이 표시됩니다</p>
+            <p className="waveform-placeholder text-xs text-iron-400">파일을 업로드하면 파형이 표시됩니다</p>
           )}
         </div>
 
         {/* Progress bar */}
         {isReady && (
-          <div className="h-1 bg-iron-100 rounded-full overflow-hidden">
+          <div id="playback-progress-track" className="h-1 bg-iron-100 rounded-full overflow-hidden">
             <div
+              id="playback-progress-fill"
               className="h-full bg-brand-blue transition-all duration-100"
               style={{ width: `${progress}%` }}
             />
@@ -136,8 +138,9 @@ export default function WaveformPlayer({
         )}
 
         {/* Controls */}
-        <div className="flex items-center gap-2">
+        <div id="player-controls" className="flex items-center gap-2">
           <button
+            id="play-pause-btn"
             onClick={handlePlayPause}
             disabled={!isReady}
             className={cn(
@@ -152,6 +155,7 @@ export default function WaveformPlayer({
           </button>
 
           <button
+            id="stop-btn"
             onClick={handleStop}
             disabled={!isReady}
             className={cn(

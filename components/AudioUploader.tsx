@@ -32,18 +32,19 @@ export default function AudioUploader({ status, onFileSelected, onReset, selecte
 
   if (selectedFile) {
     return (
-      <div className="card p-4 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-lg bg-brand-blue/10 flex items-center justify-center shrink-0">
+      <div id="audio-uploader" className="audio-file-preview card p-4 flex items-center gap-3">
+        <div className="file-icon-wrapper w-9 h-9 rounded-lg bg-brand-blue/10 flex items-center justify-center shrink-0">
           <FileAudio size={18} className="text-brand-blue" />
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-iron-800 truncate">{selectedFile.name}</p>
-          <p className="text-xs text-iron-400 mt-0.5">
+        <div className="file-info flex-1 min-w-0">
+          <p id="selected-file-name" className="text-sm font-medium text-iron-800 truncate">{selectedFile.name}</p>
+          <p className="selected-file-size text-xs text-iron-400 mt-0.5">
             {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
           </p>
         </div>
         {!isLocked && (
           <button
+            id="reset-file-btn"
             onClick={onReset}
             className="p-1.5 rounded-md hover:bg-iron-100 text-iron-400 hover:text-iron-600 transition-colors"
           >
@@ -56,6 +57,7 @@ export default function AudioUploader({ status, onFileSelected, onReset, selecte
 
   return (
     <div
+      id="audio-dropzone"
       onClick={() => !isLocked && inputRef.current?.click()}
       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
       onDragLeave={() => setIsDragging(false)}
@@ -69,16 +71,17 @@ export default function AudioUploader({ status, onFileSelected, onReset, selecte
         isLocked && "pointer-events-none opacity-50"
       )}
     >
-      <div className="w-12 h-12 rounded-xl bg-iron-100 flex items-center justify-center">
+      <div className="dropzone-icon w-12 h-12 rounded-xl bg-iron-100 flex items-center justify-center">
         <Upload size={22} className="text-iron-400" />
       </div>
-      <div className="text-center">
-        <p className="text-sm font-medium text-iron-700">
+      <div className="dropzone-instructions text-center">
+        <p className="dropzone-label text-sm font-medium text-iron-700">
           오디오 파일을 드래그하거나 클릭하여 업로드
         </p>
-        <p className="text-xs text-iron-400 mt-1">WAV, MP3, FLAC, AAC 지원</p>
+        <p className="dropzone-formats text-xs text-iron-400 mt-1">WAV, MP3, FLAC, AAC 지원</p>
       </div>
       <input
+        id="audio-file-input"
         ref={inputRef}
         type="file"
         accept="audio/*"

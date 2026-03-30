@@ -1,29 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import { generateMockAnalysis } from "@/lib/mock-data";
+import { getEngine } from "@/lib/audio-engine";
 
 /**
  * POST /api/analyze
- * - 실제 환경: multipart/form-data로 오디오 파일 수신 → .so 라이브러리 호출 → 분석 결과 반환
- * - 스켈레톤: Mock 데이터 반환 (랜덤 지연 포함)
+ *
+ * FormData 필드:
+ *   audio    : File   — 오디오 파일
+ *   duration : string — 클라이언트가 측정한 실제 재생 길이(초)
+ *
+ * 엔진 전환:
+ *   USE_MOCK=true  (기본) → MockEngine (lib/audio-engine.ts)
+ *   USE_MOCK=false        → NativeEngine (lib/native-engine.ts) + SO_PATH 필요
  */
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const file = formData.get("audio") as File | null;
+    const file         = formData.get("audio")    as File   | null;
+    const durationStr  = formData.get("duration") as string | null;
 
     if (!file) {
       return NextResponse.json({ error: "No audio file provided" }, { status: 400 });
     }
 
-    // TODO: 실제 .so 라이브러리 연동 코드로 교체
-    // const buffer = Buffer.from(await file.arrayBuffer());
-    // const result = await callNativeLib(buffer);
+    const buffer   = Buffer.from(await file.arrayBuffer());
+    const duration = durationStr ? parseFloat(durationStr) : 30;
 
-    // Simulate analysis delay (500ms ~ 2s)
-    await new Promise((r) => setTimeout(r, 500 + Math.random() * 1500));
-
-    const result = generateMockAnalysis(30);
-    result.filename = file.name;
+    const result = await getEngine().analyze({
+      buffer,
+      filename: file.name,
+      duration,
+    });
 
     return NextResponse.json(result);
   } catch (err) {

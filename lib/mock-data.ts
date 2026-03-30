@@ -2,13 +2,13 @@ import { AnalysisFrame, AnalysisResult } from "./types";
 
 /**
  * 실제 백엔드 연결 전 사용하는 Mock 분석 데이터.
- * 30초짜리 오디오, 100ms 단위 프레임(300 frames).
+ * 10ms 단위 프레임 (30초 기준 3000 frames).
  */
 export function generateMockAnalysis(duration = 30): AnalysisResult {
   const frames: AnalysisFrame[] = [];
-  const step = 0.1; // 100ms
+  const step = 0.01; // 10ms
 
-  for (let t = 0; t <= duration; t = Math.round((t + step) * 10) / 10) {
+  for (let t = 0; t <= duration; t = Math.round((t + step) * 100) / 100) {
     // 온도: 40~75°C, 완만하게 올라가다 내려오는 패턴
     const baseTemp = 55 + 15 * Math.sin((t / duration) * Math.PI);
     const temperature = parseFloat((baseTemp + (Math.random() - 0.5) * 3).toFixed(2));
