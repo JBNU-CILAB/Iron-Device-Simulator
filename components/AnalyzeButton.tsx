@@ -34,7 +34,7 @@ export default function AnalyzeButton({ status, hasFile, onClick }: Props) {
       ) : (
         <>
           <ScanSearch size={15} />
-          분석 시작
+          Submit
         </>
       )}
     </button>

@@ -42,16 +42,12 @@ export function getEngine(): AudioEngine {
   const useMock = process.env.USE_MOCK !== "false";
 
   if (!useMock) {
-    // TODO: .so 시그니처 확인 후 NativeEngine 주석 해제
-    // const soPath = process.env.SO_PATH ?? "/app/native/libaudio_analysis.so";
-    // const { NativeEngine } = require("./native-engine");
-    // _engine = new NativeEngine(soPath);
-    throw new Error(
-      "[AudioEngine] USE_MOCK=false 설정 시 native-engine.ts 구현 필요. " +
-      "lib/native-engine.ts의 TODO 주석을 채워주세요."
-    );
+    const soPath = process.env.SO_PATH ?? "/app/native/libirontune.so";
+    const { NativeEngine } = require("./native-engine");
+    _engine = new NativeEngine(soPath);
+  } else {
+    _engine = new MockEngine();
   }
 
-  _engine = new MockEngine();
-  return _engine;
+  return _engine!
 }

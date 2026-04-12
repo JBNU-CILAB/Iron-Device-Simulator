@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getEngine } from "@/lib/audio-engine";
 
+// 빌드 시 정적 분석/pre-render 방지 (koffi 네이티브 모듈 SIGSEGV 방어)
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/analyze
  *
