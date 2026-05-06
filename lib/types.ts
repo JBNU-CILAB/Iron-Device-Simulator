@@ -120,7 +120,10 @@ export interface MeasurementExport {
     recvRender:     { avg: number | null; min: number | null; max: number | null; p50: number | null; p95: number | null; p99: number | null };
     /** RTT + recv→render 합산 End-to-End */
     e2e:            { avg: number | null; min: number | null; max: number | null; p50: number | null; p95: number | null; p99: number | null };
+    /** 수신 시점 기준 freshness lag (per received frame, dropped 포함) */
     freshnessLag:   { avg: number | null; min: number | null; max: number | null; p50: number | null; p95: number | null; p99: number | null };
+    /** 렌더 완료 시점 기준 freshness lag (per render tick, 실제 사용자 체감값) */
+    renderFreshnessLag: { avg: number | null; min: number | null; max: number | null; p50: number | null; p95: number | null; p99: number | null };
     temperature:    { avg: number;        min: number;        max: number        };
     excursion:      { avg: number;        min: number;        max: number        };
     /** 측정 구간 중 streamingFrames 최대 길이 */
@@ -137,6 +140,10 @@ export interface MeasurementExport {
     eventLog: { audioTime: number; eventType: "temp_warn" | "temp_danger" | "exc_peak" }[];
   };
   frames: DebugLogEntry[];
+  /** 정책 적용 전 수신된 모든 raw 프레임 (충실도 MAE 계산용 기준값) */
+  rawFrames: { time: number; temperature: [number, number]; excursion: [number, number] }[];
+  /** 실제 화면에 렌더링된 프레임 시퀀스 (코얼레싱 정책 적용 후) */
+  renderedFrames: { time: number; temperature: [number, number]; excursion: [number, number] }[];
 }
 
 export interface StreamDebugInfo {

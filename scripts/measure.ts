@@ -133,7 +133,7 @@ async function runSingleTrack(
   try {
     // 1. 페이지 로드
     console.log(`[measure] 페이지 로드 중...`);
-    await page.goto(opts.url, { waitUntil: "networkidle0", timeout: 30000 });
+    await page.goto(opts.url, { waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForSelector("#dashboard-root", { timeout: 10000 });
     console.log(`[measure] 페이지 로드 완료`);
 
