@@ -206,19 +206,18 @@ export function handleWsConnection(ws: WebSocket): void {
         const rawExc0  = spkExcBuf.readInt32LE(0);
         const rawExc1  = spkExcBuf.readInt32LE(4);
 
-        // libirontune.so는 현재 ch0만 결과를 씀 (ch1 = 0 고정)
-        // → ch1이 0이고 ch0가 유효한 경우 ch0를 미러하여 사용
-        // (향후 .so가 ch1도 출력하면 rawTemp1/rawExc1 자동 사용)
-        const effectiveTemp1 = (rawTemp1 === 0 && rawTemp0 !== 0) ? rawTemp0 : rawTemp1;
-        const effectiveExc1  = (rawExc1  === 0 && rawExc0  !== 0) ? rawExc0  : rawExc1;
+        // 새 .so는 2ch 구조이지만 thermal 모델이 ch1 결과를 아직 채우지 못해
+        // fb_spk_temp[1]==0 으로 들어오는 경우가 있다. 이때만 ch0를 미러.
+        // (excursion 경로는 ch1까지 정상 산출되므로 raw 그대로 사용)
+        const effectiveTemp1 = rawTemp1 === 0 && rawTemp0 !== 0 ? rawTemp0 : rawTemp1;
 
         const temperature: [number, number] = [
-          Math.round(rawTemp0      * profile.tempMult * pwrScale), // ch0(L)
-          Math.round(effectiveTemp1 * profile.tempMult * pwrScale), // ch1(R) — 미러
+          Math.round(rawTemp0       * profile.tempMult * pwrScale),
+          Math.round(effectiveTemp1 * profile.tempMult * pwrScale),
         ];
         const excursion: [number, number] = [
-          Math.round(rawExc0      * profile.excMult), // ch0(L)
-          Math.round(effectiveExc1 * profile.excMult), // ch1(R) — 미러
+          Math.round(rawExc0 * profile.excMult),
+          Math.round(rawExc1 * profile.excMult),
         ];
         const processingMs = parseFloat((performance.now() - t0).toFixed(3));
 
